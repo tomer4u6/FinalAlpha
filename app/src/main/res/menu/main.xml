@@ -3,19 +3,19 @@
 
     <item
         android:id="@+id/menuRegister"
-        android:title="Register"
+        android:title="Register User"
         android:orderInCategory="100"
         />
 
     <item
         android:id="@+id/menuUpdate"
-        android:title="Update"
+        android:title="Update DB"
         android:orderInCategory="200"
         />
 
     <item
         android:id="@+id/menuScan"
-        android:title="Scan"
+        android:title="Scan NFC"
         android:orderInCategory="300"
         />
 

@@ -25,11 +25,11 @@ public class ScanActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         String str = item.getTitle().toString();
         Intent t;
-        if(str.equals("Update")){
+        if(str.equals("Update DB")){
             t = new Intent(this,UpdateActivity.class);
             startActivity(t);
         }
-        if(str.equals("Register")){
+        if(str.equals("Register User")){
             t = new Intent(this,RegisterActivity.class);
             startActivity(t);
         }

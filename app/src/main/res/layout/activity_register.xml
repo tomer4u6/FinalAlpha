@@ -23,7 +23,7 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="5"
             />
 
         <EditText
@@ -31,14 +31,14 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:ems="10"
-            android:layout_weight="0.5"
+            android:layout_weight="5"
             android:hint="Email"
             android:inputType="textEmailAddress" />
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.2"
+            android:layout_weight="2"
             />
 
         <EditText
@@ -46,20 +46,19 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:ems="10"
-            android:layout_weight="0.5"
+            android:layout_weight="5"
             android:hint="Phone Number"
             android:inputType="phone" />
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.2" />
+            android:layout_weight="2" />
 
         <Button
-            android:id="@+id/button"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="5"
             android:textSize="18dp"
             android:onClick="RegisterAccount"
             android:text="Register" />
@@ -67,7 +66,7 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="10" />
     </LinearLayout>
 
     <Space

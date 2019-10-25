@@ -92,11 +92,11 @@ public class RegisterActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         String str = item.getTitle().toString();
         Intent t;
-        if(str.equals("Update")){
+        if(str.equals("Update DB")){
             t = new Intent(this,UpdateActivity.class);
             startActivity(t);
         }
-        if(str.equals("Scan")){
+        if(str.equals("Scan NFC")){
             t = new Intent(this,ScanActivity.class);
             startActivity(t);
         }
@@ -108,6 +108,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean validateForm() {
+        //Validate if email and password are not missing
+
         boolean valid = true;
 
         String email = et_email.getText().toString();
