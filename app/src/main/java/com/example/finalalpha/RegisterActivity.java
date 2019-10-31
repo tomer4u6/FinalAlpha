@@ -25,7 +25,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     EditText et_email,et_phone;
     private FirebaseAuth mAuth;
-    String email,password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +39,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
-    }
 
     private void createAccount(String email,String password){
         Log.d(TAG, "createAccount:"+email);
@@ -65,21 +56,17 @@ public class RegisterActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(RegisterActivity.this, "Authentication succeeded.",
                                     Toast.LENGTH_SHORT).show();
-                            updateUI(user);
-                        } else {
+                        }
+                        else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(RegisterActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            updateUI(null);
                         }
                     }
                 });
     }
 
-
-    private void updateUI(FirebaseUser currentUser) {
-    }
 
 
     @Override

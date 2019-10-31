@@ -27,6 +27,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.core.utilities.Tree;
 
 import java.util.ArrayList;
@@ -40,15 +41,15 @@ public class UpdateActivity extends AppCompatActivity implements AdapterView.OnI
     ArrayList<String> stringList = new ArrayList<String>();
     ArrayAdapter<String> adapter;
 
-    Set set = new TreeSet();
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference().child("alpha");
+    DatabaseReference myRef = database.getReference("Alpha");
+    ValueEventListener strListener;
 
     AlertDialog.Builder adb;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
 
@@ -62,43 +63,26 @@ public class UpdateActivity extends AppCompatActivity implements AdapterView.OnI
         adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item,stringList);
         lv_database.setAdapter(adapter);
 
-        myRef.addChildEventListener(new ChildEventListener() {
+        strListener = new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                String value = dataSnapshot.getValue(String.class);
-                set.add(value);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 stringList.clear();
-                stringList.addAll(set);
-                adapter.notifyDataSetChanged();
-                Toast.makeText(UpdateActivity.this, "Database has been changed", Toast.LENGTH_SHORT).show();
-            }
+                for(DataSnapshot childSnapShot : dataSnapshot.getChildren()) {
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    String value = childSnapShot.getValue(String.class);
 
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getValue(String.class);
-                set.remove(value);
-                stringList.clear();
-                stringList.addAll(set);
-                adapter.notifyDataSetChanged();
-                Toast.makeText(UpdateActivity.this, "Database has been changed", Toast.LENGTH_SHORT).show();
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                    stringList.add(value);
+                }
+                adapter = new ArrayAdapter<String>(UpdateActivity.this, R.layout.support_simple_spinner_dropdown_item,stringList);
+                lv_database.setAdapter(adapter);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        };
+        myRef.addValueEventListener(strListener);
 
     }
 
@@ -112,6 +96,11 @@ public class UpdateActivity extends AppCompatActivity implements AdapterView.OnI
     public boolean onOptionsItemSelected(MenuItem item) {
         String str = item.getTitle().toString();
         Intent t;
+
+        if(strListener!=null){
+            myRef.removeEventListener(strListener);
+        }
+
         if(str.equals("Register User")){
             t = new Intent(this,RegisterActivity.class);
             startActivity(t);
@@ -130,7 +119,7 @@ public class UpdateActivity extends AppCompatActivity implements AdapterView.OnI
 
         String str = et_plainText.getText().toString();
 
-        myRef = database.getReference().child("alpha").child(str);
+        myRef = database.getReference("Alpha").child(str);
         myRef.setValue(str);
 
         Toast.makeText(this, "Writing succeeded.", Toast.LENGTH_SHORT).show();
@@ -162,12 +151,8 @@ public class UpdateActivity extends AppCompatActivity implements AdapterView.OnI
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String str = stringList.get(position);
-                myRef = database.getReference().child("alpha").child(str);
+                myRef = database.getReference("Alpha").child(str);
                 myRef.removeValue();
-                set.remove(str);
-
-                stringList.clear();
-                stringList.addAll(set);
 
                 Toast.makeText(UpdateActivity.this, "Deleting succeeded.", Toast.LENGTH_SHORT).show();
 
