@@ -18,6 +18,8 @@ import android.nfc.tech.NfcB;
 import android.nfc.tech.NfcF;
 import android.nfc.tech.NfcV;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,9 +30,13 @@ import android.widget.Toast;
 
 public class ScanActivity extends AppCompatActivity {
     NfcAdapter nfcAdapter;
+    PendingIntent pendingIntent;
+    IntentFilter filter;
+
     AlertDialog.Builder adb;
 
     String nfcID = "NFC ID:";
+    boolean isToScan;
     TextView nfcIDtv;
 
     // list of NFC technologies detected:
@@ -58,7 +64,6 @@ public class ScanActivity extends AppCompatActivity {
 
         nfcIDtv = (TextView)findViewById(R.id.nfcIDtv);
 
-
     }
 
     @Override
@@ -67,6 +72,16 @@ public class ScanActivity extends AppCompatActivity {
 
         if(nfcAdapter != null && nfcAdapter.isEnabled()){
             Toast.makeText(this, "NFC is active", Toast.LENGTH_SHORT).show();
+            // creating pending intent:
+            pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+            // creating intent receiver for NFC events:
+            filter = new IntentFilter();
+            filter.addAction(NfcAdapter.ACTION_TAG_DISCOVERED);
+            filter.addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
+            filter.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
+            // enabling foreground dispatch for getting intent from NFC event:
+            nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+            nfcAdapter.enableForegroundDispatch(this, pendingIntent, new IntentFilter[]{filter}, this.techList);
         }
         else{
             Toast.makeText(this, "NFC is not active :(", Toast.LENGTH_SHORT).show();
@@ -94,38 +109,29 @@ public class ScanActivity extends AppCompatActivity {
             AlertDialog ad = adb.create();
             ad.show();
         }
-
-        // creating pending intent:
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        // creating intent receiver for NFC events:
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(NfcAdapter.ACTION_TAG_DISCOVERED);
-        filter.addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        filter.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
-        // enabling foreground dispatch for getting intent from NFC event:
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, new IntentFilter[]{filter}, this.techList);
     }
 
     @Override
     protected void onPause() {
-        super.onPause();
 
         // disabling foreground dispatch:
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        nfcAdapter.disableForegroundDispatch(this);
+        if(nfcAdapter!=null) {
+            nfcAdapter.disableForegroundDispatch(this);
+        }
+        super.onPause();
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        if (intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
-            nfcID = nfcID + ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
+        if (isToScan && intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
+            isToScan = false;
+
+            nfcID = "NFC ID:" + ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
             Toast.makeText(this, "NFC tag was scanned.", Toast.LENGTH_SHORT).show();
-        }
-        else {
-            nfcID = "NFC ID:";
+            nfcIDtv.setText(nfcID);
         }
     }
 
@@ -167,6 +173,7 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     public void readFromTag(View view) {
-        nfcIDtv.setText(nfcID);
+        nfcIDtv.setText("NFC ID:");
+        isToScan = true;
     }
 }
