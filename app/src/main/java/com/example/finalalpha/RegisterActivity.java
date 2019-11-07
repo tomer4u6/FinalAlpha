@@ -92,6 +92,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void RegisterAccount(View view) {
         createAccount(et_email.getText().toString(),et_phone.getText().toString());
+        et_phone.setText("");
+        et_email.setText("");
     }
 
     private boolean validateForm() {

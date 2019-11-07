@@ -117,12 +117,21 @@ public class UpdateActivity extends AppCompatActivity implements AdapterView.OnI
             return;
         }
 
-        String str = et_plainText.getText().toString();
 
-        myRef = database.getReference("Alpha").child(str);
-        myRef.setValue(str);
-
-        Toast.makeText(this, "Writing succeeded.", Toast.LENGTH_SHORT).show();
+        if(et_plainText.getText().toString().equals("/")){
+            et_plainText.setError("Invalid Text.");
+        }
+        else {
+            try {
+                String str = et_plainText.getText().toString();
+                myRef = database.getReference("Alpha").child(str);
+                myRef.setValue(str);
+                Toast.makeText(this, "Writing succeeded.", Toast.LENGTH_SHORT).show();
+            } catch (Exception exception) {
+                et_plainText.setError("Invalid Text.");
+            }
+        }
+        et_plainText.setText("");
     }
 
     private boolean validateForm() {

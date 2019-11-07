@@ -18,8 +18,6 @@ import android.nfc.tech.NfcB;
 import android.nfc.tech.NfcF;
 import android.nfc.tech.NfcV;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,7 +34,7 @@ public class ScanActivity extends AppCompatActivity {
     AlertDialog.Builder adb;
 
     String nfcID = "NFC ID:";
-    boolean isToScan;
+    boolean isToScan = false;
     TextView nfcIDtv;
 
     // list of NFC technologies detected:
@@ -126,12 +124,10 @@ public class ScanActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        if (isToScan && intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
-            isToScan = false;
-
+        if (intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
+            isToScan = true;
             nfcID = "NFC ID:" + ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
             Toast.makeText(this, "NFC tag was scanned.", Toast.LENGTH_SHORT).show();
-            nfcIDtv.setText(nfcID);
         }
     }
 
@@ -173,7 +169,12 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     public void readFromTag(View view) {
-        nfcIDtv.setText("NFC ID:");
-        isToScan = true;
+        if(isToScan) {
+            nfcIDtv.setText(nfcID);
+        }
+        else{
+            nfcIDtv.setText("NFC ID:");
+        }
+        isToScan = false;
     }
 }
